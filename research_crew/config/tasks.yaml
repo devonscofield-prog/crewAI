@@ -1,0 +1,66 @@
+planning_task:
+  description: >
+    Decompose the following research question into 3-5 focused sub-questions
+    with suggested search terms and data sources for each.
+
+    Research question: {topic}
+  expected_output: >
+    A structured research plan with numbered sub-questions, each containing:
+    suggested search terms, recommended data sources, and the aspect of the
+    main question it addresses.
+  agent: research_planner
+
+web_research_task:
+  description: >
+    Using the research plan, investigate each sub-question by searching the web
+    and gathering relevant information. For each sub-question, find at least 2
+    credible sources and extract key findings.
+  expected_output: >
+    A detailed collection of findings organized by sub-question, with source
+    URLs and key quotes or data points for each finding.
+  agent: web_researcher
+  context:
+    - planning_task
+  async_execution: true
+
+data_analysis_task:
+  description: >
+    Analyze any quantitative data relevant to the research sub-questions.
+    Look for trends, statistics, comparisons, and numerical evidence that
+    supports or refutes the research question.
+  expected_output: >
+    A data analysis summary with key statistics, trends, and quantitative
+    findings relevant to each sub-question. Include data sources and
+    methodology notes.
+  agent: data_analyst
+  context:
+    - planning_task
+  async_execution: true
+
+fact_checking_task:
+  description: >
+    Cross-validate the findings from web research and data analysis. For each
+    major claim, verify it against at least one independent source. Flag any
+    contradictions and rate confidence level (high/medium/low) for each finding.
+  expected_output: >
+    A fact-check report with each claim listed alongside its verification
+    status, confidence level, supporting sources, and any contradictions found.
+    Every claim must have at least one cited source.
+  agent: fact_checker
+  context:
+    - web_research_task
+    - data_analysis_task
+
+report_writing_task:
+  description: >
+    Compile all validated findings into a comprehensive analytical report.
+    Include an executive summary, detailed findings organized by theme,
+    key data points, and a complete sources appendix.
+  expected_output: >
+    A well-structured markdown report with: executive summary, detailed
+    findings sections, data highlights, confidence assessments, and a
+    sources appendix with all citations.
+  agent: report_writer
+  context:
+    - fact_checking_task
+  output_file: research_report.md
